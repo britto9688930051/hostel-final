@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Register — Hostel Management</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cover:#1F2A44;
+    --cover-2:#28365a;
+    --page:#EDE6D6;
+    --page-2:#E4DBC6;
+    --ink:#2B2B2B;
+    --ink-soft:#6b6255;
+    --brass:#B8863B;
+    --brass-dark:#8f6a2c;
+    --red:#A23E2D;
+    --green:#4f6b4f;
+    --rule:rgba(43,43,43,0.14);
+    --shadow: 0 10px 30px rgba(31,42,68,0.18);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background: var(--cover);
+    background-image: linear-gradient(160deg, var(--cover) 0%, var(--cover-2) 60%, var(--cover) 100%);
+    font-family:'Inter',sans-serif;
+    color:var(--ink);
+    min-height:100vh;
+  }
+  .app{
+    display:flex;
+    max-width:1400px;
+    margin:0 auto;
+    min-height:100vh;
+  }
+  .spine{
+    width:230px;
+    flex-shrink:0;
+    background: var(--cover);
+    padding:28px 0;
+    display:flex;
+    flex-direction:column;
+    position:relative;
+  }
+  .spine::after{
+    content:"";
+    position:absolute;
+    right:0; top:0; bottom:0;
+    width:6px;
+    background:linear-gradient(90deg, rgba(184,134,59,0.5), transparent);
+  }
+  .brand{
+    padding:0 24px 26px 24px;
+    border-bottom:1px solid rgba(237,230,214,0.15);
+    margin-bottom:10px;
+  }
+  .brand-mark{
+    font-family:'Zilla Slab',serif;
+    font-weight:700;
+    font-size:15px;
+    letter-spacing:0.14em;
+    color:var(--brass);
+    text-transform:uppercase;
+  }
+  .brand-title{
+    font-family:'Zilla Slab',serif;
+    font-weight:600;
+    font-size:22px;
+    color:#EDE6D6;
+    margin-top:6px;
+    line-height:1.2;
+  }
+  .brand-sub{
+    font-size:11px;
+    color:rgba(237,230,214,0.55);
+    margin-top:4px;
+    font-family:'IBM Plex Mono',monospace;
+  }
+  nav.tabs{
+    display:flex;
+    flex-direction:column;
+    margin-top:8px;
+  }
+  .tab{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:13px 24px;
+    color:rgba(237,230,214,0.68);
+    font-size:14px;
+    font-weight:500;
+    cursor:pointer;
+    border-left:3px solid transparent;
+    transition:all .15s ease;
+    user-select:none;
+  }
+  .tab .num{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    color:rgba(184,134,59,0.7);
+    width:18px;
+  }
+  .tab:hover{ background:rgba(237,230,214,0.05); color:#EDE6D6; }
+  .tab.active{
+    background:rgba(237,230,214,0.08);
+    border-left-color:var(--brass);
+    color:#fff;
+  }
+  .tab.active .num{ color:var(--brass); }
+  .role-switch{
+    margin-top:auto;
+    padding:18px 24px 0 24px;
+    border-top:1px solid rgba(237,230,214,0.15);
+  }
+  .role-switch label{
+    display:block;
+    font-size:10px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:rgba(237,230,214,0.45);
+    margin-bottom:8px;
+    font-family:'IBM Plex Mono',monospace;
+  }
+  .role-pills{ display:flex; gap:6px; flex-wrap:wrap; }
+  .role-pill{
+    font-size:11.5px;
+    padding:6px 10px;
+    border-radius:20px;
+    border:1px solid rgba(237,230,214,0.25);
+    color:rgba(237,230,214,0.75);
+    cursor:pointer;
+    background:transparent;
+    font-family:'Inter',sans-serif;
+  }
+  .role-pill.active{
+    background:var(--brass);
+    border-color:var(--brass);
+    color:#1F2A44;
+    font-weight:600;
+  }
+
+  .page{
+    flex:1;
+    background:
+      linear-gradient(var(--page-2) 1px, transparent 1px);
+    background-size: 100% 40px;
+    background-color:var(--page);
+    padding:40px 48px 60px 48px;
+    position:relative;
+    box-shadow: inset 8px 0 24px -12px rgba(0,0,0,0.15);
+  }
+  .page::before{
+    content:"";
+    position:absolute;
+    left:78px; top:0; bottom:0;
+    width:1px;
+    background:rgba(162,62,45,0.18);
+  }
+  .page-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    margin-bottom:28px;
+    padding-bottom:16px;
+    border-bottom:2px solid var(--ink);
+  }
+  .page-eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--brass-dark);
+    margin-bottom:6px;
+  }
+  h1{
+    font-family:'Zilla Slab',serif;
+    font-size:34px;
+    font-weight:700;
+    margin:0;
+    color:var(--ink);
+  }
+  .today{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    color:var(--ink-soft);
+    text-align:right;
+  }
+  .view{ display:none; animation:fade .25s ease; }
+  .view.active{ display:block; }
+  @keyframes fade{ from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:none;} }
+
+  .stat-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:18px;
+    margin-bottom:34px;
+  }
+  .stat-card{
+    background:#fff;
+    border:1px solid var(--rule);
+    border-radius:4px;
+    padding:18px 20px;
+    box-shadow: var(--shadow);
+    position:relative;
+    overflow:hidden;
+  }
+  .stat-card::before{
+    content:"";
+    position:absolute; left:0; top:0; bottom:0; width:4px;
+    background:var(--brass);
+  }
+  .stat-num{
+    font-family:'Zilla Slab',serif;
+    font-size:32px;
+    font-weight:700;
+    color:var(--ink);
+  }
+  .stat-label{
+    font-size:12px;
+    color:var(--ink-soft);
+    margin-top:2px;
+  }
+  .stat-card.alert::before{ background:var(--red); }
+  .stat-card.good::before{ background:var(--green); }
+
+  .panel{
+    background:rgba(255,255,255,0.55);
+    border:1px solid var(--rule);
+    border-radius:4px;
+    padding:22px 24px;
+    margin-bottom:24px;
+  }
+  .panel h2{
+    font-family:'Zilla Slab',serif;
+    font-size:18px;
+    margin:0 0 14px 0;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .panel h2 .dot{ width:7px; height:7px; border-radius:50%; background:var(--brass); display:inline-block; }
+
+  table.ledger{ width:100%; border-collapse:collapse; }
+  table.ledger th{
+    text-align:left;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    padding:8px 10px;
+    border-bottom:1.5px solid var(--ink);
+  }
+  table.ledger td{
+    padding:11px 10px;
+    border-bottom:1px solid var(--rule);
+    font-size:13.5px;
+    vertical-align:middle;
+  }
+  table.ledger tr:hover td{ background:rgba(184,134,59,0.06); }
+
+  .stamp{
+    display:inline-block;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;
+    font-weight:700;
+    letter-spacing:0.06em;
+    padding:3px 9px;
+    border-radius:3px;
+    border:1.5px solid currentColor;
+    transform:rotate(-3deg);
+  }
+  .stamp.in{ color:var(--green); }
+  .stamp.out{ color:var(--red); }
+  .stamp.pending{ color:var(--brass-dark); }
+  .stamp.present{ color:var(--green); }
+  .stamp.absent{ color:var(--red); }
+  .stamp.resolved{ color:var(--green); }
+  .stamp.open{ color:var(--red); }
+  .stamp.progress{ color:var(--brass-dark); }
+
+  .form-row{
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+    align-items:flex-end;
+    margin-bottom:16px;
+  }
+  .field{ display:flex; flex-direction:column; gap:5px; flex:1; min-width:150px; }
+  .field label{
+    font-size:11px;
+    color:var(--ink-soft);
+    font-family:'IBM Plex Mono',monospace;
+    letter-spacing:0.04em;
+  }
+  .field input, .field select, .field textarea{
+    font-family:'Inter',sans-serif;
+    font-size:13.5px;
+    padding:9px 11px;
+    border:1px solid rgba(43,43,43,0.25);
+    border-radius:3px;
+    background:#fffdf8;
+    color:var(--ink);
+  }
+  .field input:focus, .field select:focus, .field textarea:focus{
+    outline:2px solid var(--brass);
+    outline-offset:1px;
+  }
+  button{
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+    font-size:13px;
+    padding:10px 18px;
+    border-radius:3px;
+    border:none;
+    cursor:pointer;
+    background:var(--ink);
+    color:#EDE6D6;
+  }
+  button:hover{ background:#000; }
+  button.brass{ background:var(--brass); color:#1F2A44; }
+  button.brass:hover{ background:var(--brass-dark); color:#fff; }
+  button.ghost{
+    background:transparent;
+    border:1px solid var(--ink);
+    color:var(--ink);
+    padding:6px 12px;
+    font-size:12px;
+  }
+  button.ghost:hover{ background:var(--ink); color:#fff; }
+  button.small{ padding:5px 10px; font-size:11.5px; }
+
+  .action-cell{ display:flex; gap:6px; }
+
+  .room-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
+    gap:14px;
+  }
+  .room-card{
+    background:#fff;
+    border:1px solid var(--rule);
+    border-radius:4px;
+    padding:14px 16px;
+    border-top:3px solid var(--green);
+  }
+  .room-card.full{ border-top-color:var(--red); }
+  .room-card.partial{ border-top-color:var(--brass); }
+  .room-num{ font-family:'Zilla Slab',serif; font-weight:700; font-size:20px; }
+  .room-occ{ font-size:12px; color:var(--ink-soft); margin-top:3px; }
+  .room-names{ font-size:11.5px; color:var(--ink-soft); margin-top:8px; line-height:1.5; }
+
+  .empty{
+    text-align:center;
+    padding:30px 10px;
+    color:var(--ink-soft);
+    font-size:13px;
+    font-style:italic;
+  }
+
+  footer.page-num{
+    text-align:center;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    color:var(--ink-soft);
+    margin-top:20px;
+    opacity:0.6;
+  }
+
+  @media (max-width:900px){
+    .app{ flex-direction:column; }
+    .spine{ width:100%; flex-direction:row; overflow-x:auto; padding:14px; align-items:center; }
+    .brand{ display:none; }
+    nav.tabs{ flex-direction:row; }
+    .role-switch{ margin-top:0; margin-left:auto; border-top:none; padding:0 0 0 14px; }
+    .stat-grid{ grid-template-columns:repeat(2,1fr); }
+    .page::before{ display:none; }
+    .page{ padding:28px 20px; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .view{ animation:none; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <aside class="spine">
+    <div class="brand">
+      <div class="brand-mark">Tamilnadu College of Engineering</div>
+      <div class="brand-title">The Register</div>
+      <div class="brand-sub">HOSTEL LOG &amp; ADMIN — VOL. 04</div>
+    </div>
+    <nav class="tabs" id="tabs">
+      <div class="tab active" data-view="dashboard"><span class="num">01</span> Dashboard</div>
+      <div class="tab" data-view="register"><span class="num">02</span> Gate Register</div>
+      <div class="tab" data-view="attendance"><span class="num">03</span> Attendance</div>
+      <div class="tab" data-view="rooms"><span class="num">04</span> Rooms</div>
+      <div class="tab" data-view="leave"><span class="num">05</span> Leave Requests</div>
+      <div class="tab" data-view="complaints"><span class="num">06</span> Complaints</div>
+      <div class="tab" data-view="visitors"><span class="num">07</span> Visitor Log</div>
+      <div class="tab" data-view="dslookup"><span class="num">08</span> DS &amp; ID Lookup</div>
+      <div class="tab" data-view="dbviewer" onclick="loadDatabaseView()"><span class="num">09</span> SQLite DB Viewer</div>
+    </nav>
+    <div class="role-switch">
+      <label>Viewing as</label>
+      <div class="role-pills">
+        <button class="role-pill active" data-role="student">Student</button>
+        <button class="role-pill" data-role="warden">Warden</button>
+        <button class="role-pill" data-role="admin">Admin</button>
+      </div>
+    </div>
+  </aside>
+
+  <main class="page">
+    <div class="page-head">
+      <div>
+        <div class="page-eyebrow" id="page-eyebrow">Section 01</div>
+        <h1 id="page-title">Dashboard</h1>
+      </div>
+      <div class="today" id="today"></div>
+    </div>
+
+    <section class="view active" id="view-dashboard">
+      <div class="stat-grid" id="stat-grid"></div>
+      <div class="panel">
+        <h2><span class="dot"></span> Latest gate activity</h2>
+        <table class="ledger">
+          <thead><tr><th>Student</th><th>Room</th><th>Status</th><th>Time</th></tr></thead>
+          <tbody id="dash-recent"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="view" id="view-register">
+      <div class="panel" id="register-form-panel">
+        <h2><span class="dot"></span> Log an entry</h2>
+        <div class="form-row">
+          <div class="field"><label>Student name</label><input id="reg-name" placeholder="e.g. Karthik R"></div>
+          <div class="field"><label>Room no.</label><input id="reg-room" placeholder="e.g. B-204"></div>
+          <div class="field"><label>Direction</label>
+            <select id="reg-dir"><option value="OUT">Going out</option><option value="IN">Returning in</option></select>
+          </div>
+          <div class="field"><label>Reason</label><input id="reg-reason" placeholder="e.g. Market, class trip..."></div>
+          <button class="brass" onclick="addRegisterEntry()">Add entry</button>
+        </div>
+      </div>
+      <div class="panel">
+        <h2><span class="dot"></span> Full register</h2>
+        <table class="ledger">
+          <thead><tr><th>Student</th><th>Room</th><th>Status</th><th>Reason</th><th>Time</th></tr></thead>
+          <tbody id="register-body"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="view" id="view-attendance">
+      <div class="panel">
+        <h2><span class="dot"></span> Roll call — today</h2>
+        <table class="ledger">
+          <thead><tr><th>Student</th><th>Room</th><th>Status</th><th id="att-action-head">Mark</th></tr></thead>
+          <tbody id="attendance-body"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="view" id="view-rooms">
+      <div class="panel" id="api-status" style="display:none; border-color:var(--red); color:var(--red); font-size:13px;">
+        Java backend not reachable. Run HostelServer and open <b>http://localhost:8080</b>.
+      </div>
+      <div class="panel">
+        <h2><span class="dot"></span> Apply for a room</h2>
+        <div class="form-row">
+          <div class="field"><label>Student name</label><input id="apply-name" placeholder="e.g. Ravi Kumar"></div>
+          <div class="field"><label>Student ID</label><input id="apply-id" placeholder="e.g. TCE2001"></div>
+          <button class="brass" onclick="applyForRoom()">Join queue</button>
+        </div>
+      </div>
+      <div class="panel">
+        <h2><span class="dot"></span> Allocation queue (first come, first served)</h2>
+        <table class="ledger">
+          <thead><tr><th>#</th><th>Student</th><th>ID</th><th id="queue-action-head"></th></tr></thead>
+          <tbody id="queue-body"></tbody>
+        </table>
+      </div>
+      <div class="panel">
+        <h2><span class="dot"></span> Occupancy map</h2>
+        <div class="room-grid" id="room-grid"></div>
+      </div>
+    </section>
+
+    <section class="view" id="view-leave">
+      <div class="panel" id="leave-form-panel">
+        <h2><span class="dot"></span> Request leave</h2>
+        <div class="form-row">
+          <div class="field"><label>Student name</label><input id="leave-name" placeholder="Your name"></div>
+          <div class="field"><label>From</label><input id="leave-from" type="date"></div>
+          <div class="field"><label>To</label><input id="leave-to" type="date"></div>
+          <div class="field"><label>Reason</label><input id="leave-reason" placeholder="e.g. Home visit"></div>
+          <button class="brass" onclick="addLeaveRequest()">Submit request</button>
+        </div>
+      </div>
+      <div class="panel">
+        <h2><span class="dot"></span> All requests</h2>
+        <table class="ledger">
+          <thead><tr><th>Student</th><th>Dates</th><th>Reason</th><th>Status</th><th></th></tr></thead>
+          <tbody id="leave-body"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="view" id="view-complaints">
+      <div class="panel">
+        <h2><span class="dot"></span> Raise a complaint</h2>
+        <div class="form-row">
+          <div class="field"><label>Student name</label><input id="comp-name" placeholder="Your name"></div>
+          <div class="field"><label>Room no.</label><input id="comp-room" placeholder="e.g. B-204"></div>
+          <div class="field"><label>Category</label>
+            <select id="comp-cat"><option>Plumbing</option><option>Electrical</option><option>Furniture</option><option>Wi-Fi</option><option>Other</option></select>
+          </div>
+          <div class="field" style="flex:2"><label>Description</label><input id="comp-desc" placeholder="Describe the issue"></div>
+          <button class="brass" onclick="addComplaint()">Submit</button>
+        </div>
+      </div>
+      <div class="panel">
+        <h2><span class="dot"></span> All complaints</h2>
+        <table class="ledger">
+          <thead><tr><th>Student</th><th>Room</th><th>Category</th><th>Description</th><th>Status</th><th></th></tr></thead>
+          <tbody id="complaints-body"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="view" id="view-visitors">
+      <div class="panel">
+        <h2><span class="dot"></span> Log a visitor</h2>
+        <div class="form-row">
+          <div class="field"><label>Visitor name</label><input id="vis-name" placeholder="e.g. Mr. Suresh"></div>
+          <div class="field"><label>Visiting student</label><input id="vis-student" placeholder="Student's name"></div>
+          <div class="field"><label>Purpose</label><input id="vis-purpose" placeholder="e.g. Parent visit"></div>
+          <div class="field"><label>ID reference</label><input id="vis-id" placeholder="e.g. Aadhaar last 4 digits"></div>
+          <button class="brass" onclick="addVisitor()">Log visitor</button>
+        </div>
+      </div>
+      <div class="panel">
+        <h2><span class="dot"></span> Visitor log</h2>
+        <table class="ledger">
+          <thead><tr><th>Visitor</th><th>Visiting</th><th>Purpose</th><th>ID ref.</th><th>Time</th></tr></thead>
+          <tbody id="visitors-body"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="view" id="view-dslookup">
+      <div class="panel" style="background:rgba(184,134,59,0.08); border-color:var(--brass);">
+        <h2><span class="dot"></span> Java Data Structures Engine</h2>
+        <p style="font-size:13px; color:var(--ink-soft); margin:0;">
+          This section interacts directly with the Java backend (<b>HostelDataStructures.java</b>).
+          It demonstrates the usage of <b>Queue</b> (Room Allocation FCFS), <b>HashSet</b> (Duplicate Prevention &amp; Unique Student IDs), and <b>HashMap</b> (Constant time O(1) Student Detail retrieval by ID).
+        </p>
+      </div>
+
+      <div class="panel" style="background:#fff8e7; border-left:4px solid var(--brass); color:var(--ink);">
+        <h2 style="font-size:16px; margin-bottom:6px;"><span class="dot" style="background:var(--red);"></span> 🔒 Strict Access Control</h2>
+        <p style="font-size:13px; margin:0; color:var(--ink-soft);">
+          <b>Policy:</b> ONLY registered hostel students are authorized to access data. Access is verified in real-time via the Java <b>HashSet</b> and <b>HashMap</b> security check. Unregistered or non-hostel student IDs will be denied access.
+        </p>
+      </div>
+
+      <!-- HASHMAP O(1) DETAIL LOOKUP -->
+      <div class="panel">
+        <h2><span class="dot"></span> HashMap O(1) Student Detail Retrieval</h2>
+        <div class="form-row">
+          <div class="field" style="flex:2">
+            <label>Student ID</label>
+            <input id="ds-search-id" placeholder="e.g. TCE1001, TCE1003, TCE2001" onkeypress="if(event.key==='Enter') searchStudentDetail()">
+          </div>
+          <button class="brass" onclick="searchStudentDetail()">Get Details (O(1))</button>
+        </div>
+        <div id="ds-detail-result" style="margin-top:16px;"></div>
+      </div>
+
+      <!-- HASHSET DUPLICATE CHECK & DEDUPLICATION -->
+      <div class="panel">
+        <h2><span class="dot"></span> HashSet Unique Record &amp; Duplicate Manager</h2>
+        <div class="form-row" style="align-items:center;">
+          <div class="field">
+            <label>Check ID Uniqueness</label>
+            <input id="ds-check-id" placeholder="e.g. TCE1001" oninput="checkIdUniqueness()">
+          </div>
+          <div id="ds-id-status" style="font-family:'IBM Plex Mono',monospace; font-size:12px; margin-top:18px; padding:8px 12px; border-radius:3px; background:#fff; border:1px solid var(--rule);">
+            Type an ID to check uniqueness
+          </div>
+          <button class="ghost" onclick="runDeduplication()" style="margin-left:auto;">Run HashSet Deduplication</button>
+        </div>
+        <div id="ds-dedup-msg" style="font-size:12px; color:var(--green); margin-top:8px;"></div>
+      </div>
+
+      <!-- QUEUE ALLOCATION LIST -->
+      <div class="panel">
+        <h2><span class="dot"></span> Room Allocation Queue (FCFS LinkedList)</h2>
+        <table class="ledger">
+          <thead><tr><th>Position</th><th>Student Name</th><th>Student ID</th><th>Action</th></tr></thead>
+          <tbody id="ds-queue-body"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="view" id="view-dbviewer">
+      <div class="panel" style="background:#eef6fc; border-color:#bce0fd;">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+          <div>
+            <h2 style="margin:0;"><span class="dot" style="background:#0066cc;"></span> 🗄️ SQLite Database File Viewer (hostel.db)</h2>
+            <p style="font-size:13px; color:var(--ink-soft); margin:4px 0 0 0;">
+              Live contents of SQLite database <b>hostel.db</b> dynamically rendered directly from the Java backend server.
+            </p>
+          </div>
+          <button class="brass" onclick="loadDatabaseView()">🔄 Refresh Database Tables</button>
+        </div>
+      </div>
+
+      <div id="db-tables-container">
+        <div style="font-size:13px; color:var(--ink-soft);">Loading database tables...</div>
+      </div>
+    </section>
+
+    <footer class="page-num">— Powered by Java Backend (Queue, HashSet, HashMap) &amp; SQLite Database —</footer>
+  </main>
+</div>
+
+<script>
+let state = {
+  role: 'student',
+  register: [
+    {name:'Karthik R', room:'B-204', dir:'OUT', reason:'Grocery run', time:'08:12 AM'},
+    {name:'Divya S', room:'A-112', dir:'IN', reason:'Returned from class', time:'09:40 AM'},
+    {name:'Mohan V', room:'C-301', dir:'OUT', reason:'Doctor visit', time:'10:05 AM'},
+  ],
+  attendance: [
+    {name:'Karthik R', room:'B-204', status:'present'},
+    {name:'Divya S', room:'A-112', status:'present'},
+    {name:'Mohan V', room:'C-301', status:'absent'},
+    {name:'Priya N', room:'A-112', status:'present'},
+    {name:'Arun K', room:'B-204', status:'present'},
+  ],
+  queue: [],
+  rooms: [
+    {num:'A-112', cap:3, occ:['Divya S','Priya N']},
+    {num:'B-204', cap:2, occ:['Karthik R','Arun K']},
+    {num:'C-301', cap:2, occ:['Mohan V']},
+    {num:'C-302', cap:2, occ:[]},
+    {num:'D-410', cap:3, occ:['Naveen T','Suresh M','Vikram J']},
+  ],
+  leave: [
+    {name:'Priya N', from:'2026-07-22', to:'2026-07-24', reason:'Home visit', status:'pending'},
+    {name:'Arun K', from:'2026-07-19', to:'2026-07-20', reason:'Family function', status:'approved'},
+  ],
+  complaints: [
+    {name:'Naveen T', room:'D-410', cat:'Electrical', desc:'Fan not working', status:'open'},
+    {name:'Divya S', room:'A-112', cat:'Wi-Fi', desc:'No signal in room', status:'progress'},
+  ],
+  visitors: [
+    {visitor:'Mrs. Lakshmi', student:'Karthik R', purpose:'Parent visit', idref:'—', time:'11:20 AM'},
+  ],
+};
+
+function isValidHostelStudentName(name) {
+  if (!name || !name.trim()) return false;
+  const clean = name.trim().toLowerCase();
+  let found = false;
+  state.rooms.forEach(r => {
+    r.occ.forEach(o => {
+      const sName = typeof o === 'string' ? o : o.name;
+      if (sName && sName.trim().toLowerCase() === clean) found = true;
+    });
+  });
+  return found;
+}
+
+const views = {
+  dashboard:{title:'Dashboard', eyebrow:'Section 01'},
+  register:{title:'Gate Register', eyebrow:'Section 02'},
+  attendance:{title:'Attendance', eyebrow:'Section 03'},
+  rooms:{title:'Rooms', eyebrow:'Section 04'},
+  leave:{title:'Leave Requests', eyebrow:'Section 05'},
+  complaints:{title:'Complaints', eyebrow:'Section 06'},
+  visitors:{title:'Visitor Log', eyebrow:'Section 07'},
+  dslookup:{title:'Data Structures & ID Lookup', eyebrow:'Section 08'},
+  dbviewer:{title:'SQLite Database Viewer', eyebrow:'Section 09'},
+};
+
+document.getElementById('tabs').addEventListener('click', e=>{
+  const tab = e.target.closest('.tab');
+  if(!tab) return;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  tab.classList.add('active');
+  const key = tab.dataset.view;
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+key).classList.add('active');
+  document.getElementById('page-title').textContent = views[key].title;
+  document.getElementById('page-eyebrow').textContent = views[key].eyebrow;
+});
+
+document.querySelectorAll('.role-pill').forEach(p=>{
+  p.addEventListener('click', ()=>{
+    document.querySelectorAll('.role-pill').forEach(x=>x.classList.remove('active'));
+    p.classList.add('active');
+    state.role = p.dataset.role;
+    renderAll();
+  });
+});
+
+document.getElementById('today').textContent = new Date().toLocaleDateString('en-IN', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
+
+function renderDashboard(){
+  const totalCap = state.rooms.reduce((a,r)=>a+r.cap,0);
+  const totalOcc = state.rooms.reduce((a,r)=>a+r.occ.length,0);
+  const present = state.attendance.filter(a=>a.status==='present').length;
+  const openComplaints = state.complaints.filter(c=>c.status!=='resolved').length;
+  const pendingLeave = state.leave.filter(l=>l.status==='pending').length;
+
+  const cards = [
+    {num: `${totalOcc}/${totalCap}`, label:'Beds occupied', cls:''},
+    {num: `${present}/${state.attendance.length}`, label:'Present today', cls:'good'},
+    {num: openComplaints, label:'Open complaints', cls: openComplaints>0 ? 'alert':'good'},
+    {num: pendingLeave, label:'Pending leave requests', cls: pendingLeave>0 ? 'alert':'good'},
+  ];
+  document.getElementById('stat-grid').innerHTML = cards.map(c=>`
+    <div class="stat-card ${c.cls}">
+      <div class="stat-num">${c.num}</div>
+      <div class="stat-label">${c.label}</div>
+    </div>`).join('');
+
+  const recent = [...state.register].slice(-5).reverse();
+  document.getElementById('dash-recent').innerHTML = recent.length ? recent.map(r=>`
+    <tr><td>${r.name}</td><td>${r.room}</td>
+    <td><span class="stamp ${r.dir==='IN'?'in':'out'}">${r.dir}</span></td>
+    <td>${r.time}</td></tr>`).join('') : `<tr><td colspan="4" class="empty">No entries yet.</td></tr>`;
+}
+
+function renderRegister(){
+  document.getElementById('register-form-panel').style.display = 'block';
+  document.getElementById('register-body').innerHTML = state.register.length ? [...state.register].reverse().map(r=>`
+    <tr>
+      <td>${r.name}</td><td>${r.room}</td>
+      <td><span class="stamp ${r.dir==='IN'?'in':'out'}">${r.dir}</span></td>
+      <td>${r.reason||'—'}</td><td>${r.time}</td>
+    </tr>`).join('') : `<tr><td colspan="5" class="empty">Register is empty. Log the first entry above.</td></tr>`;
+}
+
+function addRegisterEntry(){
+  const name = document.getElementById('reg-name').value.trim();
+  const room = document.getElementById('reg-room').value.trim();
+  const dir = document.getElementById('reg-dir').value;
+  const reason = document.getElementById('reg-reason').value.trim();
+  if(!name || !room){ alert('Enter student name and room number.'); return; }
+
+  if(!isValidHostelStudentName(name)){
+    alert('❌ ACCESS DENIED: Student "' + name + '" is NOT a registered hostel student!\n\nGate register entries can ONLY be logged for registered hostel students.');
+    return;
+  }
+
+  const time = new Date().toLocaleTimeString('en-IN', {hour:'2-digit', minute:'2-digit'});
+  state.register.push({name, room, dir, reason, time});
+  document.getElementById('reg-name').value='';
+  document.getElementById('reg-room').value='';
+  document.getElementById('reg-reason').value='';
+  renderAll();
+}
+
+function renderAttendance(){
+  const canMark = state.role !== 'student';
+  document.getElementById('att-action-head').textContent = canMark ? 'Mark' : 'Status';
+  document.getElementById('attendance-body').innerHTML = state.attendance.map((a,i)=>`
+    <tr>
+      <td>${a.name}</td><td>${a.room}</td>
+      <td><span class="stamp ${a.status}">${a.status.toUpperCase()}</span></td>
+      <td>${canMark ? `
+        <div class="action-cell">
+          <button class="ghost small" onclick="setAttendance(${i},'present')">Present</button>
+          <button class="ghost small" onclick="setAttendance(${i},'absent')">Absent</button>
+        </div>` : '<span style="color:var(--ink-soft); font-size:12px;">Warden-only</span>'}
+      </td>
+    </tr>`).join('');
+}
+function setAttendance(i, status){
+  state.attendance[i].status = status;
+  renderAll();
+}
+
+function renderRooms(){
+  document.getElementById('room-grid').innerHTML = state.rooms.map(r=>{
+    const ratio = r.occ.length / r.cap;
+    const cls = ratio>=1 ? 'full' : ratio>0 ? 'partial' : '';
+    return `<div class="room-card ${cls}">
+      <div class="room-num">${r.num}</div>
+      <div class="room-occ">${r.occ.length} / ${r.cap} beds filled</div>
+      <div class="room-names">${r.occ.length ? r.occ.map(o=>{
+        const n = typeof o==='string' ? o : o.name;
+        const vac = (typeof o!=='string' && state.role!=='student')
+          ? ` <button class="ghost small" style="padding:1px 6px;font-size:10px" title="Vacate" onclick="vacateStudent('${esc(o.id)}')">✕</button>` : '';
+        return `<div>${esc(n)}${vac}</div>`;
+      }).join('') : 'Vacant'}</div>
+    </div>`;
+  }).join('');
+}
+
+const API = location.protocol === 'file:' ? 'http://localhost:8080/api' : '/api';
+
+function esc(t){
+  return String(t).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+async function api(path, method='GET', body){
+  const res = await fetch(API+path, {
+    method,
+    headers: body ? {'Content-Type':'application/json'} : {},
+    body: body ? JSON.stringify(body) : undefined
+  });
+  const data = await res.json();
+  if(!res.ok) throw new Error(data.error || 'Request failed');
+  return data;
+}
+
+async function loadRooms(){
+  const banner = document.getElementById('api-status');
+  try{
+    const data = await api('/state');
+    state.rooms = data.rooms;
+    state.queue = data.queue;
+    banner.style.display = 'none';
+    renderAll();
+  }catch(e){
+    banner.style.display = 'block';
+  }
+}
+
+async function applyForRoom(){
+  const name = document.getElementById('apply-name').value.trim();
+  const id = document.getElementById('apply-id').value.trim();
+  if(!name || !id){ alert('Enter student name and ID.'); return; }
+  try{
+    await api('/apply','POST',{name, id});
+    document.getElementById('apply-name').value='';
+    document.getElementById('apply-id').value='';
+    await loadRooms();
+  }catch(e){ alert(e.message); }
+}
+
+async function allocateNext(){
+  try{
+    const r = await api('/allocate','POST');
+    alert(r.student.name + ' allocated to room ' + r.room);
+    await loadRooms();
+  }catch(e){ alert(e.message); }
+}
+
+async function vacateStudent(id){
+  if(!confirm('Vacate student ' + id + '?')) return;
+  try{
+    await api('/vacate','POST',{id});
+    await loadRooms();
+  }catch(e){ alert(e.message); }
+}
+
+function renderQueue(){
+  const canAllocate = state.role !== 'student';
+  document.getElementById('queue-action-head').innerHTML = canAllocate && state.queue.length
+    ? '<button class="brass small" onclick="allocateNext()">Allocate next</button>' : '';
+  const rows = state.queue.length ? state.queue.map((s,i)=>`
+    <tr><td>#${i+1}</td><td>${esc(s.name)}</td><td>${esc(s.id)}</td><td>${i===0 ? '<span class="stamp pending">NEXT IN QUEUE</span>' : ''}</td></tr>
+  `).join('') : `<tr><td colspan="4" class="empty">Allocation Queue is empty.</td></tr>`;
+
+  document.getElementById('queue-body').innerHTML = rows;
+  const dsBody = document.getElementById('ds-queue-body');
+  if(dsBody) {
+    dsBody.innerHTML = state.queue.length ? state.queue.map((s,i)=>`
+      <tr>
+        <td><b>#${i+1}</b></td>
+        <td>${esc(s.name)}</td>
+        <td><code style="font-family:'IBM Plex Mono',monospace;">${esc(s.id)}</code></td>
+        <td>${canAllocate && i===0 ? '<button class="brass small" onclick="allocateNext()">Poll & Allocate</button>' : (i===0 ? '<span class="stamp pending">FIRST IN LINE</span>' : 'In Queue')}</td>
+      </tr>
+    `).join('') : `<tr><td colspan="4" class="empty">Queue is empty. Join queue above.</td></tr>`;
+  }
+}
+
+function renderLeave(){
+  const canDecide = state.role !== 'student';
+  document.getElementById('leave-body').innerHTML = state.leave.length ? [...state.leave].reverse().map((l)=>{
+    const realIdx = state.leave.indexOf(l);
+    return `<tr>
+      <td>${l.name}</td>
+      <td>${l.from} → ${l.to}</td>
+      <td>${l.reason}</td>
+      <td><span class="stamp ${l.status==='approved'?'in':l.status==='rejected'?'out':'pending'}">${l.status.toUpperCase()}</span></td>
+      <td>${canDecide && l.status==='pending' ? `
+        <div class="action-cell">
+          <button class="ghost small" onclick="decideLeave(${realIdx},'approved')">Approve</button>
+          <button class="ghost small" onclick="decideLeave(${realIdx},'rejected')">Reject</button>
+        </div>` : ''}
+      </td>
+    </tr>`;
+  }).join('') : `<tr><td colspan="5" class="empty">No leave requests yet.</td></tr>`;
+}
+async function addLeaveRequest(){
+  const name = document.getElementById('leave-name').value.trim();
+  const from = document.getElementById('leave-from').value;
+  const to = document.getElementById('leave-to').value;
+  const reason = document.getElementById('leave-reason').value.trim();
+  if(!name || !from || !to){ alert('Fill in name and both dates.'); return; }
+
+  if(!isValidHostelStudentName(name)){
+    alert('❌ ACCESS DENIED: Student "' + name + '" is NOT a registered hostel student!\n\nLeave requests are ONLY allowed for registered hostel students in the database. This request will NOT be added to the app.');
+    return;
+  }
+
+  try {
+    await api('/leave', 'POST', {name, from, to, reason});
+    state.leave.push({name, from, to, reason, status:'pending'});
+    document.getElementById('leave-name').value='';
+    document.getElementById('leave-from').value='';
+    document.getElementById('leave-to').value='';
+    document.getElementById('leave-reason').value='';
+    alert('Leave request submitted successfully.');
+    renderAll();
+  } catch(e) {
+    alert('❌ ' + e.message);
+  }
+}
+function decideLeave(i, status){ state.leave[i].status = status; renderAll(); }
+
+function renderComplaints(){
+  const canManage = state.role !== 'student';
+  document.getElementById('complaints-body').innerHTML = state.complaints.length ? [...state.complaints].reverse().map((c)=>{
+    const realIdx = state.complaints.indexOf(c);
+    const cls = c.status==='resolved' ? 'resolved' : c.status==='progress' ? 'progress' : 'open';
+    return `<tr>
+      <td>${c.name}</td><td>${c.room}</td><td>${c.cat}</td><td>${c.desc}</td>
+      <td><span class="stamp ${cls}">${c.status.toUpperCase()}</span></td>
+      <td>${canManage && c.status!=='resolved' ? `
+        <div class="action-cell">
+          ${c.status==='open' ? `<button class="ghost small" onclick="setComplaint(${realIdx},'progress')">In progress</button>` : ''}
+          <button class="ghost small" onclick="setComplaint(${realIdx},'resolved')">Resolve</button>
+        </div>` : ''}
+      </td>
+    </tr>`;
+  }).join('') : `<tr><td colspan="6" class="empty">No complaints logged.</td></tr>`;
+}
+
+async function addComplaint(){
+  const name = document.getElementById('comp-name').value.trim();
+  const room = document.getElementById('comp-room').value.trim();
+  const cat = document.getElementById('comp-cat').value;
+  const desc = document.getElementById('comp-desc').value.trim();
+  if(!name || !room || !desc){ alert('Fill in name, room and description.'); return; }
+
+  if(!isValidHostelStudentName(name)){
+    alert('❌ ACCESS DENIED: Student "' + name + '" is NOT a registered hostel student!\n\nComplaints are ONLY allowed for registered hostel students in the database. This complaint will NOT be added to the app.');
+    return;
+  }
+
+  try {
+    await api('/complaint', 'POST', {name, room, cat, desc});
+    state.complaints.push({name, room, cat, desc, status:'open'});
+    document.getElementById('comp-name').value='';
+    document.getElementById('comp-room').value='';
+    document.getElementById('comp-desc').value='';
+    alert('Complaint submitted successfully.');
+    renderAll();
+  } catch(e) {
+    alert('❌ ' + e.message);
+  }
+}
+function setComplaint(i, status){ state.complaints[i].status = status; renderAll(); }
+
+function renderVisitors(){
+  document.getElementById('visitors-body').innerHTML = state.visitors.length ? [...state.visitors].reverse().map(v=>`
+    <tr><td>${v.visitor}</td><td>${v.student}</td><td>${v.purpose}</td><td>${v.idref||'—'}</td><td>${v.time}</td></tr>
+  `).join('') : `<tr><td colspan="5" class="empty">No visitors logged today.</td></tr>`;
+}
+function addVisitor(){
+  const visitor = document.getElementById('vis-name').value.trim();
+  const student = document.getElementById('vis-student').value.trim();
+  const purpose = document.getElementById('vis-purpose').value.trim();
+  const idref = document.getElementById('vis-id').value.trim();
+  if(!visitor || !student){ alert('Enter visitor name and visiting student.'); return; }
+
+  if(!isValidHostelStudentName(student)){
+    alert('❌ ACCESS DENIED: Visiting student "' + student + '" is NOT a registered hostel student!\n\nVisitor entries can ONLY be logged for registered hostel students in the database. This entry will NOT be added to the app.');
+    return;
+  }
+
+  const time = new Date().toLocaleTimeString('en-IN', {hour:'2-digit', minute:'2-digit'});
+  state.visitors.push({visitor, student, purpose, idref, time});
+  document.getElementById('vis-name').value='';
+  document.getElementById('vis-student').value='';
+  document.getElementById('vis-purpose').value='';
+  document.getElementById('vis-id').value='';
+  renderAll();
+}
+
+async function searchStudentDetail() {
+  const id = document.getElementById('ds-search-id').value.trim();
+  const container = document.getElementById('ds-detail-result');
+  if(!id) {
+    container.innerHTML = '<div style="color:var(--red); font-size:13px;">Please enter a Student ID.</div>';
+    return;
+  }
+  container.innerHTML = '<div style="font-size:13px; color:var(--ink-soft);">Querying Java HashMap...</div>';
+  try {
+    const data = await api('/student-detail?id=' + encodeURIComponent(id));
+    if(!data.found || data.accessDenied) {
+      container.innerHTML = `
+        <div style="background:#fff3f3; border:1px solid var(--red); border-left:4px solid var(--red); padding:14px 16px; border-radius:4px; color:var(--red);">
+          <div style="font-weight:700; font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:0.06em;">🚫 ACCESS DENIED</div>
+          <div style="font-size:13px; margin-top:4px; color:var(--ink);">${esc(data.message || 'Only registered hostel students are authorized to access data.')}</div>
+        </div>`;
+      return;
+    }
+    container.innerHTML = `
+      <div style="background:#fff; border:1px solid var(--rule); border-left:4px solid var(--brass); padding:16px; border-radius:4px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+          <div>
+            <h3 style="margin:0; font-family:'Zilla Slab',serif; font-size:20px;">${esc(data.name)} <span style="font-size:13px; color:var(--ink-soft); font-family:'IBM Plex Mono',monospace;">(${esc(data.id)})</span></h3>
+            <div style="font-size:13px; color:var(--ink-soft); margin-top:4px;">Room: <b>${esc(data.roomNum)}</b> | Status: <b>${esc(data.attendanceStatus)}</b></div>
+          </div>
+          <div>
+            <span class="stamp in" style="font-size:10px;">${esc(data.lookupTime)}</span>
+          </div>
+        </div>
+        <div style="margin-top:14px; display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:12px; font-size:12px;">
+          <div style="background:#faf8f3; padding:10px; border-radius:3px; border:1px solid var(--rule);">
+            <strong style="font-family:'IBM Plex Mono',monospace; color:var(--brass-dark);">Gate Log History:</strong>
+            <ul style="margin:4px 0 0 16px; padding:0;">
+              ${data.gateHistory.length ? data.gateHistory.map(g => `<li>${esc(g)}</li>`).join('') : '<li style="font-style:italic; color:var(--ink-soft);">No gate logs</li>'}
+            </ul>
+          </div>
+          <div style="background:#faf8f3; padding:10px; border-radius:3px; border:1px solid var(--rule);">
+            <strong style="font-family:'IBM Plex Mono',monospace; color:var(--brass-dark);">Leave Requests:</strong>
+            <ul style="margin:4px 0 0 16px; padding:0;">
+              ${data.leaveHistory.length ? data.leaveHistory.map(l => `<li>${esc(l)}</li>`).join('') : '<li style="font-style:italic; color:var(--ink-soft);">No leave logs</li>'}
+            </ul>
+          </div>
+          <div style="background:#faf8f3; padding:10px; border-radius:3px; border:1px solid var(--rule);">
+            <strong style="font-family:'IBM Plex Mono',monospace; color:var(--brass-dark);">Complaints Logged:</strong>
+            <ul style="margin:4px 0 0 16px; padding:0;">
+              ${data.complaintsHistory.length ? data.complaintsHistory.map(c => `<li>${esc(c)}</li>`).join('') : '<li style="font-style:italic; color:var(--ink-soft);">No complaints</li>'}
+            </ul>
+          </div>
+        </div>
+      </div>
+    `;
+  } catch(e) {
+    container.innerHTML = `<div style="color:var(--red); font-size:13px;">Error: ${esc(e.message)}</div>`;
+  }
+}
+
+function checkIdUniqueness() {
+  const val = document.getElementById('ds-check-id').value.trim().toUpperCase();
+  const target = document.getElementById('ds-id-status');
+  if(!val) {
+    target.innerHTML = 'Type an ID to check uniqueness';
+    target.style.borderColor = 'var(--rule)';
+    target.style.color = 'var(--ink)';
+    return;
+  }
+  // Check against active room occupants & queue IDs
+  let isFound = false;
+  state.rooms.forEach(r => r.occ.forEach(o => {
+    const id = typeof o === 'string' ? '' : o.id;
+    if(id && id.toUpperCase() === val) isFound = true;
+  }));
+  state.queue.forEach(q => {
+    if(q.id && q.id.toUpperCase() === val) isFound = true;
+  });
+
+  if(isFound) {
+    target.innerHTML = `⚠️ ID <b>${esc(val)}</b> EXISTS in system (HashSet check: Registered)`;
+    target.style.borderColor = 'var(--red)';
+    target.style.color = 'var(--red)';
+  } else {
+    target.innerHTML = `✅ ID <b>${esc(val)}</b> is UNIQUE (HashSet check: Available)`;
+    target.style.borderColor = 'var(--green)';
+    target.style.color = 'var(--green)';
+  }
+}
+
+async function runDeduplication() {
+  try {
+    const res = await api('/deduplicate', 'POST');
+    document.getElementById('ds-dedup-msg').textContent = res.message;
+    await loadRooms();
+  } catch(e) {
+    alert(e.message);
+  }
+}
+
+async function loadDatabaseView() {
+  const container = document.getElementById('db-tables-container');
+  if(!container) return;
+  container.innerHTML = '<div style="font-size:13px; color:var(--ink-soft);">Fetching live tables from hostel.db...</div>';
+  try {
+    const data = await api('/database-view');
+    const tableNames = Object.keys(data);
+    let html = '';
+    tableNames.forEach(tName => {
+      const rows = data[tName];
+      const cols = rows.length ? Object.keys(rows[0]) : [];
+      html += `
+        <div class="panel">
+          <h2 style="text-transform:uppercase; font-size:15px;"><span class="dot"></span> Table: ${esc(tName)} (${rows.length} rows)</h2>
+          ${rows.length ? `
+            <div style="overflow-x:auto;">
+              <table class="ledger">
+                <thead>
+                  <tr>${cols.map(c => `<th>${esc(c)}</th>`).join('')}</tr>
+                </thead>
+                <tbody>
+                  ${rows.map(r => `
+                    <tr>${cols.map(c => `<td>${esc(r[c])}</td>`).join('')}</tr>
+                  `).join('')}
+                </tbody>
+              </table>
+            </div>
+          ` : '<div style="font-size:12px; color:var(--ink-soft); font-style:italic;">(Table is empty)</div>'}
+        </div>
+      `;
+    });
+    container.innerHTML = html;
+  } catch(e) {
+    container.innerHTML = `<div style="color:var(--red); font-size:13px;">Error reading database: ${esc(e.message)}</div>`;
+  }
+}
+
+function renderAll(){
+  renderDashboard();
+  renderRegister();
+  renderAttendance();
+  renderRooms();
+  renderLeave();
+  renderComplaints();
+  renderVisitors();
+  renderQueue();
+}
+renderAll();
+loadRooms();
+</script>
+</body>
+</html>
